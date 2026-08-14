@@ -11,6 +11,7 @@ class TestDefault(Scene):
 
         heading = Heading("Typography & Panels")
         heading.next_to(title, DOWN, buff=0.4)
+        heading.align_to(title,LEFT)
 
         self.play(Write(title))
         self.play(FadeIn(heading, shift=UP * 0.2))
@@ -35,7 +36,7 @@ class TestDefault(Scene):
         large_box = LargeBox()
 
         box_group = VGroup(small_box, medium_box, large_box).arrange(DOWN, buff=0.3)
-        box_group.next_to(text_group, RIGHT, buff=1.9)
+        box_group.next_to(text_group, RIGHT, buff=0.6)
 
         small_label = SmallText("Small").move_to(small_box)
         medium_label = SmallText("Medium").move_to(medium_box)
