@@ -19,7 +19,7 @@ class TestDefault(Scene):
         large = LargeText("Large text — key concepts")
         medium = MediumText("Medium text — general explanation")
         small = SmallText("Small text — captions & labels")
-        code = CodeText("GET /index.html HTTP/1.1")
+        code = CodeText("Code Example")
 
         text_group = VGroup(large, medium, small, code).arrange(DOWN, buff=0.3, aligned_edge=LEFT)
         text_group.next_to(heading, DOWN, buff=0.6).to_edge(LEFT, buff=1.0)
@@ -35,7 +35,7 @@ class TestDefault(Scene):
         large_box = LargeBox()
 
         box_group = VGroup(small_box, medium_box, large_box).arrange(DOWN, buff=0.3)
-        box_group.next_to(text_group, RIGHT, buff=1.2)
+        box_group.next_to(text_group, RIGHT, buff=1.9)
 
         small_label = SmallText("Small").move_to(small_box)
         medium_label = SmallText("Medium").move_to(medium_box)
@@ -62,9 +62,9 @@ class TestDefault(Scene):
         semantic_group = VGroup(safe, warn, danger).arrange(RIGHT, buff=0.4)
         semantic_group.next_to(box_group, DOWN, buff=0.8).align_to(box_group, LEFT)
 
-        safe_label = SmallText("Safe").next_to(safe, DOWN, buff=0.15)
-        warn_label = SmallText("Warning").next_to(warn, DOWN, buff=0.15)
-        danger_label = SmallText("Danger").next_to(danger, DOWN, buff=0.15)
+        safe_label = SmallText("Safe").move_to(safe)
+        warn_label = SmallText("Warning").move_to(warn)
+        danger_label = SmallText("Danger").move_to(danger)
 
         self.play(
             LaggedStart(
