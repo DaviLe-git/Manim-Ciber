@@ -15,8 +15,8 @@ class TCPHandshake(Scene):
         client = LabeledBox("Client", box_size="medium", text_size="medium")
         server = LabeledBox("Server", box_size="medium", text_size="medium")
 
-        client.to_edge(LEFT, buff=1.5).shift(DOWN * 0.5)
-        server.to_edge(RIGHT, buff=1.5).shift(DOWN * 0.5)
+        client.to_edge(LEFT, buff=1.5).shift(UP * 1.5)
+        server.to_edge(RIGHT, buff=1.5).shift(UP * 1.5)
 
         self.play(FadeIn(client), FadeIn(server))
         self.wait(0.3)
@@ -109,7 +109,7 @@ class TCPHandshake(Scene):
 
         # --- Connection established ---
         established = MediumText("Connection Established", color=COLOR_SAFE)
-        established.next_to(VGroup(client_line, server_line), DOWN, buff=0.4)
+        established.next_to(VGroup(client_line, server_line), DOWN, buff=0)
 
         self.play(FadeOut(step3_label))
         self.play(Write(established))
