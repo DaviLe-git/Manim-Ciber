@@ -1,0 +1,17 @@
+# Manim generated files
+media/
+output/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+
+# OS/editor files
+.DS_Store
+.vscode/
+.idea/
