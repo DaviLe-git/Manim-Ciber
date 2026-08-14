@@ -1,53 +1,80 @@
 from manim import *
+from components.default import *
 
-TITLE_SIZE = 52
-HEADING_SIZE = 40
-LARGE_TEXT_SIZE = 32
-MEDIUM_TEXT_SIZE = 26
-SMALL_TEXT_SIZE = 20
-CODE_SIZE = 22
 
-def Title(text):
-    return Text(text, font_size=TITLE_SIZE)
+class TestDefault(Scene):
+    def construct(self):
+        apply_theme(self)
 
-def Heading(text):
-    return Text(text, font_size=HEADING_SIZE)
+        title = Title("Cybersecurity Visual System")
+        title.to_edge(UP)
 
-def LargeText(text):
-    return Text(text, font_size=LARGE_TEXT_SIZE)
+        heading = Heading("Typography & Panels")
+        heading.next_to(title, DOWN, buff=0.4)
 
-def MediumText(text):
-    return Text(text, font_size=MEDIUM_TEXT_SIZE)
+        self.play(Write(title))
+        self.play(FadeIn(heading, shift=UP * 0.2))
+        self.wait(0.5)
 
-def SmallText(text):
-    return Text(text, font_size=SMALL_TEXT_SIZE)
+        large = LargeText("Large text — key concepts")
+        medium = MediumText("Medium text — general explanation")
+        small = SmallText("Small text — captions & labels")
+        code = CodeText("GET /index.html HTTP/1.1")
 
-SMALL_BOX_WIDTH = 2.0
-SMALL_BOX_HEIGHT = 0.8
+        text_group = VGroup(large, medium, small, code).arrange(DOWN, buff=0.3, aligned_edge=LEFT)
+        text_group.next_to(heading, DOWN, buff=0.6).to_edge(LEFT, buff=1.0)
 
-MEDIUM_BOX_WIDTH = 3.0
-MEDIUM_BOX_HEIGHT = 1.4
+        self.play(LaggedStart(
+            *[FadeIn(t, shift=UP * 0.1) for t in text_group],
+            lag_ratio=0.2
+        ))
+        self.wait(0.5)
 
-LARGE_BOX_WIDTH = 4.0
-LARGE_BOX_HEIGHT = 2.0
+        small_box = SmallBox()
+        medium_box = MediumBox()
+        large_box = LargeBox()
 
-def SmallBox():
-    return RoundedRectangle(
-        width=SMALL_BOX_WIDTH,
-        height=SMALL_BOX_HEIGHT,
-        corner_radius=0.15,
-    )
+        box_group = VGroup(small_box, medium_box, large_box).arrange(DOWN, buff=0.3)
+        box_group.next_to(text_group, RIGHT, buff=1.2)
 
-def MediumBox():
-    return RoundedRectangle(
-        width=MEDIUM_BOX_WIDTH,
-        height=MEDIUM_BOX_HEIGHT,
-        corner_radius=0.15,
-    )
+        small_label = SmallText("Small").move_to(small_box)
+        medium_label = SmallText("Medium").move_to(medium_box)
+        large_label = SmallText("Large").move_to(large_box)
 
-def LargeBox():
-    return RoundedRectangle(
-        width=LARGE_BOX_WIDTH,
-        height=LARGE_BOX_HEIGHT,
-        corner_radius=0.15,
-    )
+        self.play(
+            LaggedStart(
+                *[Create(b) for b in box_group],
+                lag_ratio=0.2
+            )
+        )
+        self.play(
+            FadeIn(small_label),
+            FadeIn(medium_label),
+            FadeIn(large_label),
+        )
+        self.wait(0.5)
+
+        # Semantic color demo
+        safe = SmallBox(stroke_color=COLOR_SAFE, fill_color=COLOR_SAFE)
+        warn = SmallBox(stroke_color=COLOR_WARNING, fill_color=COLOR_WARNING)
+        danger = SmallBox(stroke_color=COLOR_DANGER, fill_color=COLOR_DANGER)
+
+        semantic_group = VGroup(safe, warn, danger).arrange(RIGHT, buff=0.4)
+        semantic_group.next_to(box_group, DOWN, buff=0.8).align_to(box_group, LEFT)
+
+        safe_label = SmallText("Safe").next_to(safe, DOWN, buff=0.15)
+        warn_label = SmallText("Warning").next_to(warn, DOWN, buff=0.15)
+        danger_label = SmallText("Danger").next_to(danger, DOWN, buff=0.15)
+
+        self.play(
+            LaggedStart(
+                *[Create(b) for b in semantic_group],
+                lag_ratio=0.2
+            )
+        )
+        self.play(
+            FadeIn(safe_label),
+            FadeIn(warn_label),
+            FadeIn(danger_label),
+        )
+        self.wait(1)
