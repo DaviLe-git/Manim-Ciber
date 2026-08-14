@@ -1,80 +1,119 @@
 from manim import *
-from components.default import *
+
+# ============================================================
+# COLOR PALETTE
+# Dark editorial style: deep slate background, muted teal accent,
+# off-white text. Inspired by clean data-journalism report style,
+# adapted for a dark theme.
+# ============================================================
+
+BACKGROUND_COLOR = "#12181F"      # deep slate / near-black navy
+PANEL_BACKGROUND = "#1B242E"      # slightly lighter panel background
+
+TEXT_PRIMARY = "#EAEDF0"          # off-white, main text
+TEXT_SECONDARY = "#9AA5B1"        # muted gray, captions/labels
+
+ACCENT = "#6FA8A0"                # muted teal/steel blue (primary accent)
+ACCENT_BRIGHT = "#8FC4BC"         # brighter teal for highlights/emphasis
+ACCENT_DIM = "#3D4F4C"            # dim teal, for subtle lines/dividers
+
+PANEL_FILL = "#6FA8A0"            # teal fill for panels (used at low opacity)
+PANEL_FILL_OPACITY = 0.08
+PANEL_STROKE_OPACITY = 0.9
+PANEL_STROKE_WIDTH = 1.5
+
+# Semantic colors (kept muted/desaturated to match the editorial feel)
+COLOR_SAFE = "#7FB299"
+COLOR_WARNING = "#D9B36C"
+COLOR_DANGER = "#C97B7B"
 
 
-class TestDefault(Scene):
-    def construct(self):
-        apply_theme(self)
+# ============================================================
+# TYPOGRAPHY
+# ============================================================
 
-        title = Title("Cybersecurity Visual System")
-        title.to_edge(UP)
+TITLE_SIZE = 52
+HEADING_SIZE = 40
+LARGE_TEXT_SIZE = 32
+MEDIUM_TEXT_SIZE = 26
+SMALL_TEXT_SIZE = 20
+CODE_SIZE = 22
 
-        heading = Heading("Typography & Panels")
-        heading.next_to(title, DOWN, buff=0.4)
+FONT_MAIN = "Helvetica"    # clean sans-serif body/heading font
+FONT_CODE = "Courier New"  # monospace for code/terminal elements
 
-        self.play(Write(title))
-        self.play(FadeIn(heading, shift=UP * 0.2))
-        self.wait(0.5)
 
-        large = LargeText("Large text — key concepts")
-        medium = MediumText("Medium text — general explanation")
-        small = SmallText("Small text — captions & labels")
-        code = CodeText("GET /index.html HTTP/1.1")
+def Title(text, color=TEXT_PRIMARY):
+    return Text(text, font_size=TITLE_SIZE, font=FONT_MAIN, color=color, weight=BOLD)
 
-        text_group = VGroup(large, medium, small, code).arrange(DOWN, buff=0.3, aligned_edge=LEFT)
-        text_group.next_to(heading, DOWN, buff=0.6).to_edge(LEFT, buff=1.0)
 
-        self.play(LaggedStart(
-            *[FadeIn(t, shift=UP * 0.1) for t in text_group],
-            lag_ratio=0.2
-        ))
-        self.wait(0.5)
+def Heading(text, color=TEXT_PRIMARY):
+    return Text(text, font_size=HEADING_SIZE, font=FONT_MAIN, color=color, weight=BOLD)
 
-        small_box = SmallBox()
-        medium_box = MediumBox()
-        large_box = LargeBox()
 
-        box_group = VGroup(small_box, medium_box, large_box).arrange(DOWN, buff=0.3)
-        box_group.next_to(text_group, RIGHT, buff=1.2)
+def LargeText(text, color=TEXT_PRIMARY):
+    return Text(text, font_size=LARGE_TEXT_SIZE, font=FONT_MAIN, color=color)
 
-        small_label = SmallText("Small").move_to(small_box)
-        medium_label = SmallText("Medium").move_to(medium_box)
-        large_label = SmallText("Large").move_to(large_box)
 
-        self.play(
-            LaggedStart(
-                *[Create(b) for b in box_group],
-                lag_ratio=0.2
-            )
-        )
-        self.play(
-            FadeIn(small_label),
-            FadeIn(medium_label),
-            FadeIn(large_label),
-        )
-        self.wait(0.5)
+def MediumText(text, color=TEXT_PRIMARY):
+    return Text(text, font_size=MEDIUM_TEXT_SIZE, font=FONT_MAIN, color=color)
 
-        # Semantic color demo
-        safe = SmallBox(stroke_color=COLOR_SAFE, fill_color=COLOR_SAFE)
-        warn = SmallBox(stroke_color=COLOR_WARNING, fill_color=COLOR_WARNING)
-        danger = SmallBox(stroke_color=COLOR_DANGER, fill_color=COLOR_DANGER)
 
-        semantic_group = VGroup(safe, warn, danger).arrange(RIGHT, buff=0.4)
-        semantic_group.next_to(box_group, DOWN, buff=0.8).align_to(box_group, LEFT)
+def SmallText(text, color=TEXT_SECONDARY):
+    return Text(text, font_size=SMALL_TEXT_SIZE, font=FONT_MAIN, color=color)
 
-        safe_label = SmallText("Safe").next_to(safe, DOWN, buff=0.15)
-        warn_label = SmallText("Warning").next_to(warn, DOWN, buff=0.15)
-        danger_label = SmallText("Danger").next_to(danger, DOWN, buff=0.15)
 
-        self.play(
-            LaggedStart(
-                *[Create(b) for b in semantic_group],
-                lag_ratio=0.2
-            )
-        )
-        self.play(
-            FadeIn(safe_label),
-            FadeIn(warn_label),
-            FadeIn(danger_label),
-        )
-        self.wait(1)
+def CodeText(text, color=ACCENT_BRIGHT):
+    return Text(text, font_size=CODE_SIZE, font=FONT_CODE, color=color)
+
+
+# ============================================================
+# BOXES / PANELS
+# Thin teal border, low-opacity teal fill, rounded corners —
+# matches the "panel" look of the reference style.
+# ============================================================
+
+SMALL_BOX_WIDTH = 2.0
+SMALL_BOX_HEIGHT = 0.8
+MEDIUM_BOX_WIDTH = 3.0
+MEDIUM_BOX_HEIGHT = 1.4
+LARGE_BOX_WIDTH = 4.0
+LARGE_BOX_HEIGHT = 2.0
+
+CORNER_RADIUS = 0.15
+
+
+def _panel(width, height, stroke_color, fill_color, corner_radius=CORNER_RADIUS):
+    return RoundedRectangle(
+        width=width,
+        height=height,
+        corner_radius=corner_radius,
+        stroke_color=stroke_color,
+        stroke_width=PANEL_STROKE_WIDTH,
+        stroke_opacity=PANEL_STROKE_OPACITY,
+        fill_color=fill_color,
+        fill_opacity=PANEL_FILL_OPACITY,
+    )
+
+
+def SmallBox(stroke_color=ACCENT, fill_color=PANEL_FILL):
+    return _panel(SMALL_BOX_WIDTH, SMALL_BOX_HEIGHT, stroke_color, fill_color)
+
+
+def MediumBox(stroke_color=ACCENT, fill_color=PANEL_FILL):
+    return _panel(MEDIUM_BOX_WIDTH, MEDIUM_BOX_HEIGHT, stroke_color, fill_color)
+
+
+def LargeBox(stroke_color=ACCENT, fill_color=PANEL_FILL):
+    return _panel(LARGE_BOX_WIDTH, LARGE_BOX_HEIGHT, stroke_color, fill_color)
+
+
+# ============================================================
+# SCENE HELPER
+# Call this at the start of a scene's construct() to set the
+# dark editorial background.
+# ============================================================
+
+def apply_theme(scene):
+    """Sets the standard background color for a scene."""
+    scene.camera.background_color = BACKGROUND_COLOR
