@@ -12,8 +12,8 @@ class TCPHandshakeV2(Scene):
         self.wait(0.5)
 
         # --- Client and Server nodes ---
-        client = LabeledBox("Client", box_size="medium", text_size="medium")
-        server = LabeledBox("Server", box_size="medium", text_size="medium")
+        client = LabeledBox("Client", box_size="small", text_size="medium")
+        server = LabeledBox("Server", box_size="small", text_size="medium")
         client.to_edge(LEFT, buff=1.5).shift(UP * 1.5)
         server.to_edge(RIGHT, buff=1.5).shift(UP * 1.5)
         self.play(FadeIn(client), FadeIn(server))
