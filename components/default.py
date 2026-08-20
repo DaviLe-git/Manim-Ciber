@@ -392,7 +392,7 @@ class Terminal(VGroup):
             self.body.stretch_to_fit_height(self.body.height + new.height + self._line_buff)
             self.body.move_to(top, aligned_edge=UP)
         self.lines.add(new)
-        self.add(new)
+        #self.add(new)
         return new
 
 

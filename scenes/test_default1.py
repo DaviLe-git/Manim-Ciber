@@ -72,7 +72,7 @@ class TestTypography(CyberScene):
             ("COLOR_DANGER", COLOR_DANGER),
         ]]).arrange(DOWN, aligned_edge=LEFT, buff=0.2)
 
-        palette = VGroup(col_a, col_b).arrange(RIGHT, aligned_edge=TOP, buff=1.0)
+        palette = VGroup(col_a, col_b).arrange(RIGHT, aligned_edge=UP, buff=1.0)
         palette.next_to(rows, RIGHT, buff=1.2).align_to(rows, UP)
 
         self.play(FadeIn(palette, lag_ratio=0.05))
