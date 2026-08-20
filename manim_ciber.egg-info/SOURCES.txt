@@ -1,0 +1,9 @@
+README.md
+pyproject.toml
+components/__init__.py
+components/default.py
+components/default1.py
+manim_ciber.egg-info/PKG-INFO
+manim_ciber.egg-info/SOURCES.txt
+manim_ciber.egg-info/dependency_links.txt
+manim_ciber.egg-info/top_level.txt
