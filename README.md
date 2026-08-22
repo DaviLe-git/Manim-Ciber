@@ -66,29 +66,6 @@ External assets used by animations, such as images, icons, or other media.
 
 Local output directory for generated files. Rendered media is not tracked by Git.
 
-## Current Visual System
-
-The project currently defines standard typography sizes:
-
-```text
-Title:        52
-Heading:      40
-Large text:   32
-Medium text:  26
-Small text:   20
-Code:         22
-```
-
-Standard box sizes are also defined:
-
-```text
-Small:   2.0 × 0.8
-Medium:  3.0 × 1.4
-Large:   4.0 × 2.0
-```
-
-These values are centralized in `components/default.py` so that the visual appearance can be changed consistently across scenes.
-
 ## Rendering
 
 Manim Community is used to render the animations.
