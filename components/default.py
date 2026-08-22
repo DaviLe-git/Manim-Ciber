@@ -179,7 +179,7 @@ def Connector(start, end, label=None, color=ACCENT, label_color=TEXT_SECONDARY,
         buff=buff, max_tip_length_to_length_ratio=0.15,
     )
     if dashed:
-        arrow = DashedVMobject(arrow, dash_length=0.14, dashed_ratio=0.6)
+        arrow = DashedVMobject(arrow, num_dashes=12, dashed_ratio=0.6)
     if label is None:
         return VGroup(arrow)
     label_text = SmallText(label, color=label_color)
