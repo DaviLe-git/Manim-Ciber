@@ -40,9 +40,15 @@ Reusable visual components and design elements shared between scenes.
 
 The `default.py` module currently contains:
 
-* Typography presets
-* Small, medium, and large text
-* Small, medium, and large boxes
+* Color Pallete
+* Typography
+* Panels & Boxes
+* Badges
+* Diagram Parts
+* Icons
+* Terminal Window
+* Composition 
+* Scene base * Animation Helpers 
 
 This will eventually evolve into a larger visual component library.
 
