@@ -176,6 +176,7 @@ class TestIcons(CyberScene):
         ).arrange_in_grid(rows=2, cols=4, buff=0.8)
 
         grid.next_to(header, DOWN, buff=0.6)
+        grid.shift(RIGHT)
 
         self.play(LaggedStart(
             *[FadeIn(c, shift=0.2 * UP, scale=0.9) for c in grid],
@@ -249,6 +250,7 @@ class TestDiagram(CyberScene):
 
         net = VGroup(client, firewall, server).arrange(RIGHT, buff=2.4)
         net.next_to(header, DOWN, buff=0.7)
+        net.shift(RIGHT)
 
         c_req = Connector(
             client[0].get_right() + RIGHT * 0.05,
