@@ -13,12 +13,14 @@ class TCPIP(CyberScene):
 
         caption = Caption("TCP/IP isn't one protocol — it's two, splitting the work.")
         self.play(FadeIn(caption))
+        self.wait(1)
 
         def say(text):
             nonlocal caption
             new = Caption(text)
             self.play(FadeTransform(caption, new), run_time=0.7)
             caption = new
+            self.wait(1)
 
         card_ip = InfoCard(
             "IP — the postal service",
@@ -37,17 +39,18 @@ class TCPIP(CyberScene):
         cards.move_to(RIGHT * 0.2)
 
         self.play(FadeIn(cards, lag_ratio=0.15))
-        self.wait(1)
+        self.wait(2)
 
         say("Now watch the two of them work together.")
         self.play(FadeOut(cards))
+        self.wait(1)
 
         def device(icon_fn, name, color=ACCENT):
             return VGroup(icon_fn(color=color), SmallText(name)).arrange(DOWN, buff=0.25)
 
         sender = device(LaptopIcon, "Sender")
         receiver = device(ServerIcon, "Receiver")
-        net = VGroup(sender, receiver).arrange(RIGHT, buff=3.8)
+        net = VGroup(sender, receiver).arrange(RIGHT, buff=5.8)
         net.move_to(DOWN * 0.4)
         self.play(FadeIn(net, lag_ratio=0.2))
 
@@ -56,11 +59,11 @@ class TCPIP(CyberScene):
 
         say("Before any data, both sides must agree to talk.")
 
-        c_syn = Connector(sr + UP * 0.55 + RIGHT * 0.05,
-                          rl + UP * 0.55 + LEFT * 0.05, label="SYN")
+        c_syn = Connector(sr + UP * 1.0 + RIGHT * 0.05,
+                          rl + UP * 1.0 + LEFT * 0.05, label="SYN")
         p_syn = Packet("SYN", color=ACCENT_BRIGHT)
-        path_syn = Line(sr + UP * 0.55 + RIGHT * 0.15,
-                        rl + UP * 0.55 + LEFT * 0.15).set_opacity(0)
+        path_syn = Line(sr + UP * 1.0 + RIGHT * 0.15,
+                        rl + UP * 1.0 + LEFT * 0.15).set_opacity(0)
         p_syn.move_to(path_syn.get_start())
         self.play(Create(c_syn))
         self.play(MoveAlongPath(p_syn, path_syn), run_time=1.2)
@@ -68,7 +71,7 @@ class TCPIP(CyberScene):
         say("SYN: “I'd like to talk.”")
 
         c_synack = Connector(rl + LEFT * 0.05, sr + RIGHT * 0.05,
-                             label="SYN-ACK", side=DOWN)
+                             label="SYN-ACK")
         p_synack = Packet("SYN-ACK", color=ACCENT_BRIGHT)
         path_synack = Line(rl + LEFT * 0.15, sr + RIGHT * 0.15).set_opacity(0)
         p_synack.move_to(path_synack.get_start())
@@ -77,12 +80,12 @@ class TCPIP(CyberScene):
         self.play(FadeOut(p_synack, shift=0.2 * LEFT))
         say("SYN-ACK: “Agreed — I'm listening.”")
 
-        c_ack = Connector(sr + DOWN * 0.55 + RIGHT * 0.05,
-                          rl + DOWN * 0.55 + LEFT * 0.05,
+        c_ack = Connector(sr + DOWN * 1.0 + RIGHT * 0.05,
+                          rl + DOWN * 1.0 + LEFT * 0.05,
                           label="ACK", side=DOWN)
         p_ack = Packet("ACK", color=ACCENT_BRIGHT)
-        path_ack = Line(sr + DOWN * 0.55 + RIGHT * 0.15,
-                        rl + DOWN * 0.55 + LEFT * 0.15).set_opacity(0)
+        path_ack = Line(sr + DOWN * 1.0 + RIGHT * 0.15,
+                        rl + DOWN * 1.0 + LEFT * 0.15).set_opacity(0)
         p_ack.move_to(path_ack.get_start())
         self.play(Create(c_ack))
         self.play(MoveAlongPath(p_ack, path_ack), run_time=1.2)
@@ -90,9 +93,9 @@ class TCPIP(CyberScene):
         say("ACK: “Confirmed.”")
 
         established = Badge("CONNECTION ESTABLISHED", kind="safe")
-        established.move_to((sr + rl) / 2 + UP * 1.5)
+        established.move_to((sr + rl) / 2 + UP * 2.5)
         self.play(FadeIn(established, scale=0.8))
-        self.wait(0.5)
+        self.wait(1.0)
         self.play(FadeOut(c_syn), FadeOut(c_synack), FadeOut(c_ack))
 
         say("Every chunk is numbered — and each needs a receipt.")
@@ -115,7 +118,7 @@ class TCPIP(CyberScene):
         self.play(FadeOut(d2, shift=0.3 * DOWN),
                   FadeIn(lost, shift=0.1 * DOWN),
                   Flash(lost_at, color=COLOR_WARNING, line_length=0.3))
-        self.wait(0.5)
+        self.wait(1.0)
 
         say("…TCP assumes it was lost, and simply sends it again.")
         self.play(FadeOut(lost))
