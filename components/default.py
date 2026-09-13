@@ -12,6 +12,7 @@ from typing import Optional, Sequence, Tuple, Union
 
 from manim import *
 
+import numpy as np
 
 # ============================================================
 # 1 · COLOR PALETTE
@@ -298,9 +299,132 @@ def FirewallIcon(width=2.4, height=1.1, color=ACCENT, stroke_width=2.5,
     icon.set_stroke(color, width=stroke_width).set_fill(opacity=0)
     return icon
 
+# ============================================================
+# 7. DIAGRAM KIT — nodes, links, graphs, failure marks
+# ============================================================
+
+def _to_3d(p):
+    """Normalize a point (list/tuple/np) to a 3D np array."""
+    p = np.array(p, dtype=float)
+    return np.array([p[0], p[1], 0.0]) if p.shape == (2,) else p
+
+
+def NetNode(label=None, radius=0.42, color=ACCENT, fill_opacity=0.15,
+            label_color=TEXT_PRIMARY, font_size=None):
+    """Circular network-diagram node with a short label inside (A, B, SW…)."""
+    circle = Circle(radius=radius, stroke_color=color, stroke_width=2.5,
+                    fill_color=color, fill_opacity=fill_opacity)
+    if label is None:
+        return circle
+    text = Text(str(label), font=FONT_MAIN, weight=BOLD,
+                font_size=font_size or SMALL_TEXT_SIZE * 0.9, color=label_color)
+    if text.width > circle.width * 0.7:
+        text.scale_to_fit_width(circle.width * 0.7)
+    text.move_to(circle)
+    return VGroup(circle, text)
+
+
+def Link(start, end, color=ACCENT_DIM, stroke_width=2.5, label=None,
+         label_color=TEXT_SECONDARY, label_buff=0.12, trim=0.0):
+    """Plain undirected connection (no arrowhead — use Connector for arrows).
+    start/end: points or mobjects (mobjects connect center-to-center;
+    pair with edge_toward to hit an edge instead). trim pulls each end
+    back along the line — e.g. trim=0.42 to stop at node edges.
+    Returns a Line, or VGroup(line, label) when a label is given."""
+    p1 = _to_3d(start.get_center() if isinstance(start, Mobject) else start)
+    p2 = _to_3d(end.get_center() if isinstance(end, Mobject) else end)
+    if trim and np.linalg.norm(p2 - p1) > 2 * trim:
+        u = (p2 - p1) / np.linalg.norm(p2 - p1)
+        p1, p2 = p1 + u * trim, p2 - u * trim
+    line = Line(p1, p2, color=color, stroke_width=stroke_width)
+    if label is None:
+        return line
+    tag = SmallText(label, color=label_color)
+    tag.next_to(line, UP, buff=label_buff)
+    return VGroup(line, tag)
+
+
+def edge_toward(mobj, target):
+    """Point on mobj's bounding-box edge in the direction of target.
+    Use it to attach links/arrows to the EDGE of oddly-shaped mobjects
+    (icons) instead of poking through their center."""
+    c = mobj.get_center()
+    d = _to_3d(target) - c
+    if np.linalg.norm(d) < 1e-9:
+        return c
+    half = np.array([mobj.width / 2, mobj.height / 2, 0])
+    ratios = [half[i] / abs(d[i]) if abs(d[i]) > 1e-9 else np.inf for i in (0, 1)]
+    return c + d * min(ratios)
+
+
+def circular_layout(names, radius=1.5, center=ORIGIN, start_angle=PI / 2):
+    """Evenly place names around a circle → {name: point} for GraphDiagram.
+    Accepts a string ('ABCDE') or any iterable of names."""
+    names = list(names)
+    n = len(names)
+    c = _to_3d(center)
+    return {
+        name: c + radius * np.array(
+            [np.cos(start_angle + i * TAU / n),
+             np.sin(start_angle + i * TAU / n), 0])
+        for i, name in enumerate(names)
+    }
+
+
+class GraphDiagram(VGroup):
+    """Whole node-link diagram from a spec:
+
+        pos = circular_layout("ABCDE", radius=1.3, center=DOWN * 0.4)
+        net = GraphDiagram(pos, [("A", "B"), ("B", "C"), ("E", "A")])
+
+    Access pieces by name for animating: net.nodes["A"], net.links[("A", "B")].
+    Edges may carry a label: ("A", "B", "10 Gbps").
+    """
+
+    def __init__(self, positions, edges=(), node_color=ACCENT,
+                 link_color=ACCENT_DIM, node_radius=0.42, trim=None,
+                 node_kwargs=None, link_kwargs=None):
+        self.nodes = {}
+        self.links = {}
+        trim = node_radius if trim is None else trim
+        node_kwargs, link_kwargs = node_kwargs or {}, link_kwargs or {}
+
+        for name, point in positions.items():
+            node = NetNode(str(name), radius=node_radius,
+                           color=node_color, **node_kwargs)
+            node.move_to(_to_3d(point))
+            self.nodes[name] = node
+
+        link_mobs = []
+        for edge in edges:
+            a, b, *rest = edge
+            label = rest[0] if rest else None
+            link = Link(self.nodes[a], self.nodes[b], color=link_color,
+                        label=label, trim=trim, **link_kwargs)
+            self.links[(a, b)] = self.links[(b, a)] = link
+            link_mobs.append(link)
+
+        super().__init__(*link_mobs, *self.nodes.values())
+
+
+def FailMark(target, size=None, color=COLOR_DANGER, stroke_width=4):
+    """Red ✕ overlaid on a mobject or point — 'this node/link is down'.
+    size defaults to ~90% of the target's width; pass size explicitly for
+    long thin targets (e.g. FailMark(link.get_center(), size=0.4))."""
+    if isinstance(target, Mobject):
+        center, size = target.get_center(), size or target.width * 0.9
+    else:
+        center, size = _to_3d(target), size or 0.6
+    s = size / 2
+    mark = VGroup(
+        Line([-s, -s, 0], [s, s, 0]),
+        Line([-s, s, 0], [s, -s, 0]),
+    ).set_stroke(color, width=stroke_width)
+    mark.move_to(center)
+    return mark
 
 # ============================================================
-# 7 · TERMINAL WINDOW
+# 8 · TERMINAL WINDOW
 # ============================================================
 
 class Terminal(VGroup):
@@ -397,7 +521,7 @@ class Terminal(VGroup):
 
 
 # ============================================================
-# 8 · COMPOSITION (section openers, lists, cards, captions)
+# 9 · COMPOSITION (section openers, lists, cards, captions)
 # ============================================================
 
 def Divider(width=4.5):
@@ -469,7 +593,7 @@ def Caption(text, buff=0.4):
 
 
 # ============================================================
-# 9 · SCENE BASE & ANIMATION HELPERS
+# 10 · SCENE BASE & ANIMATION HELPERS
 # ============================================================
 
 def apply_theme(scene):

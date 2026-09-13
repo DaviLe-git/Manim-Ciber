@@ -15,13 +15,14 @@ Scenes:
     TestTerminal      — Terminal window, add_line(), TypeIn()
     TestDiagram       — Connectors (solid/dashed), travelling Packets
     TestCompositions  — InfoCard, BulletList, Divider, Caption
+    TestDiagramKit    -
 
 SectionHeader is exercised at the top of every scene as a bonus.
 """
 
 from manim import *
 from components.default import *
-
+from itertools import combinations
 
 # ============================================================
 # 01 · TYPOGRAPHY + PALETTE
@@ -308,9 +309,23 @@ class TestDiagram(CyberScene):
                   Flash(firewall[0].get_bottom(), color=COLOR_DANGER, line_length=0.35))
         self.wait()
 
-
 # ============================================================
 # 07 · COMPOSITIONS
+# ============================================================
+
+# Have to Make it better 
+
+class TestDiagramKit(CyberScene):
+    def construct(self):
+        net = GraphDiagram(circular_layout("ABCDE", radius=1.4),
+                           list(combinations("ABCDE", 2))[:8])
+        self.play(FadeIn(net, lag_ratio=0.05))
+        self.play(Create(FailMark(net.nodes["C"])),
+                  FadeIn(Badge("NODE DOWN", kind="danger").to_corner(UR)))
+        self.wait()
+
+# ============================================================
+# 08 · COMPOSITIONS
 # ============================================================
 
 class TestCompositions(CyberScene):
