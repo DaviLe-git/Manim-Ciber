@@ -21,7 +21,7 @@ class TCPIP(CyberScene):
             self.play(FadeTransform(caption, new), run_time=0.7)
             caption = new
             self.wait(1)
-
+        # Make both bigger, i cant read it
         card_ip = InfoCard(
             "IP — the postal service",
             "Addresses each packet and routes it hop by hop. "
