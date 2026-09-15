@@ -622,3 +622,109 @@ def TypeIn(text_mobj, lag_ratio=0.08, shift=0.06):
         *[FadeIn(g, shift=shift * UP) for g in glyphs],
         lag_ratio=lag_ratio,
     )
+
+ # ============================================================
+# SIGNAL KIT — waveforms, scopes, bit encodings
+# for physical-layer scenes (encoding, modulation, noise…)
+# ============================================================
+
+def WaveCurve(fn, x_range=(0.0, 1.0), width=8.0, amplitude=0.75,
+              color=ACCENT_BRIGHT, stroke_width=3, samples=800):
+    """Plot y = fn(x) as a curve in scene units.
+    fn should be continuous (jumps become near-vertical lines); for
+    piecewise-constant signals use LevelWave/BitWave instead.
+    The curve spans `width` scene units; y = 1 maps to `amplitude`."""
+    x0, x1 = x_range
+    ts = np.linspace(x0, x1, samples)
+    pts = [np.array([(t - x0) / (x1 - x0) * width, amplitude * fn(t), 0.0])
+           for t in ts]
+    curve = VMobject(stroke_color=color, stroke_width=stroke_width,
+                     fill_opacity=0)
+    curve.set_points_as_corners(pts)
+    return curve
+
+
+def SineWave(width=8.0, cycles=3.0, amplitude=0.75, phase=0.0,
+             color=ACCENT_BRIGHT, stroke_width=3):
+    """Pure sine wave: `cycles` periods across `width` scene units."""
+    return WaveCurve(lambda t: np.sin(TAU * cycles * t + phase),
+                     width=width, amplitude=amplitude, color=color,
+                     stroke_width=stroke_width,
+                     samples=max(800, 40 * int(cycles)))
+
+
+def LevelWave(levels, width=8.0, amplitude=0.75, color=ACCENT_BRIGHT,
+              stroke_width=3):
+    """Piecewise-constant waveform — one level per equal-width symbol
+    slot. Levels are y-values (±1 → ±amplitude on screen). Crisp vertical
+    edges: the right tool for NRZ / multilevel / PAM signals."""
+    n = len(levels)
+    cell = width / n
+
+    def pt(x, y):
+        return np.array([x, amplitude * y, 0.0])
+
+    pts = [pt(0.0, levels[0])]
+    for i in range(1, n):
+        x = i * cell
+        pts.append(pt(x, levels[i - 1]))
+        pts.append(pt(x, levels[i]))
+    pts.append(pt(width, levels[-1]))
+    curve = VMobject(stroke_color=color, stroke_width=stroke_width,
+                     fill_opacity=0)
+    curve.set_points_as_corners(pts)
+    return curve
+
+
+def BitWave(bits, width=8.0, amplitude=0.75, high=1.0, low=-1.0,
+            color=ACCENT_BRIGHT, stroke_width=3):
+    """NRZ encoding of a bit string ('1011…'): 1 → high, 0 → low."""
+    levels = [high if b == "1" else low for b in str(bits)]
+    return LevelWave(levels, width=width, amplitude=amplitude,
+                     color=color, stroke_width=stroke_width)
+
+
+def BitRow(bits, cell=1.0, color=TEXT_SECONDARY):
+    """Monospace bit characters, one centered per slot of width `cell`.
+    Pair with BitWave (same width/n cell) and center both on the same
+    point so each digit sits above its wave segment."""
+    chars = VGroup()
+    for i, b in enumerate(str(bits)):
+        c = CodeText(b, color=color)
+        c.move_to(np.array([(i + 0.5) * cell, 0.0, 0.0]))
+        chars.add(c)
+    return chars
+
+
+def Scope(width=10.0, height=2.8, title=None, cells=(12, 4),
+          background=TERMINAL_BACKGROUND):
+    """Oscilloscope panel: dark screen, faint grid, brighter center line.
+    Place waves with wave.move_to(scope.body.get_center()).
+    title: optional small tab straddling the top-left border."""
+    body = RoundedRectangle(width=width, height=height, corner_radius=0.12,
+                            fill_color=background, fill_opacity=1,
+                            stroke_color=ACCENT_DIM,
+                            stroke_width=PANEL_STROKE_WIDTH)
+    cols, rows = cells
+    grid = VGroup()
+    for i in range(1, cols):
+        x = body.get_left()[0] + i * width / cols
+        grid.add(Line([x, body.get_bottom()[1] + 0.1, 0],
+                      [x, body.get_top()[1] - 0.1, 0],
+                      color=ACCENT_DIM, stroke_width=1, stroke_opacity=0.35))
+    for j in range(1, rows):
+        y = body.get_bottom()[1] + j * height / rows
+        grid.add(Line([body.get_left()[0] + 0.1, y, 0],
+                      [body.get_right()[0] - 0.1, y, 0],
+                      color=ACCENT_DIM, stroke_width=1, stroke_opacity=0.35))
+    mid = Line([body.get_left()[0] + 0.1, body.get_center()[1], 0],
+               [body.get_right()[0] - 0.1, body.get_center()[1], 0],
+               color=ACCENT_DIM, stroke_width=1.5, stroke_opacity=0.6)
+    scope = VGroup(body, grid, mid)
+    if title:
+        tab = SmallText(title, color=TEXT_SECONDARY).scale(0.7)
+        tab.next_to(body, UP, buff=-0.16).align_to(body, LEFT)
+        scope.add(tab)
+    scope.body = body          # anchor for placing waves
+    scope.center_line = mid
+    return scope
