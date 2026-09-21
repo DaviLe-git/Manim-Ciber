@@ -16,6 +16,7 @@ class InformationAndSignal(CyberScene):
 
         caption = Caption("Your bits are perfect. Physics isn't.")
         self.play(FadeIn(caption))
+        self.wait(1)
 
         def say(text):
             nonlocal caption
@@ -36,7 +37,7 @@ class InformationAndSignal(CyberScene):
             width=5.4)
         cards = VGroup(card_info, card_sig).arrange(RIGHT, buff=0.8)
         cards.next_to(header, DOWN, buff=0.6)
-        cards.move_to(RIGHT * 0.4) # moveed to right
+        cards.move_to(RIGHT * 0.2) # moveed to right
         self.play(FadeIn(cards, lag_ratio=0.15))
         say("A message is information — abstract and perfect. "
             "To send it, it must become a signal: physics.")
@@ -68,8 +69,8 @@ class InformationAndSignal(CyberScene):
         lbl0 = SmallText("0 = -V", color=TEXT_SECONDARY)
         lbl0.next_to(scope, RIGHT, buff=0.3).set_y(cy - 0.8)
         self.play(FadeIn(lbl1), FadeIn(lbl0))
-        say("One voltage per bit: high=1, low=0. This is "
-            "baseband — the signal sits at low frequency and goes "
+        say("1 voltage=bit: high=1,low=0. This is "
+            "baseband—the signal sits at low frequency and goes "
             "straight onto the wire.") # its too long to fit on screen
         self.wait(0.5)
         self.play(FadeOut(scope), FadeOut(wave), FadeOut(row),
@@ -111,7 +112,7 @@ class InformationAndSignal(CyberScene):
         badge = Badge("DIGITAL = ANALOG, SUMMED", kind="info").to_corner(UR, buff=0.7)
         self.play(FadeIn(badge, scale=0.8))
         say("Odd harmonics stack into a square. Digital signals are built "
-            "out of analog physics — the divide is thinner than it looks.") # too long
+            "out of analog physics") # too long
         self.wait(1)
         self.play(FadeOut(scope), FadeOut(sine), FadeOut(badge))
 
@@ -152,10 +153,10 @@ class InformationAndSignal(CyberScene):
         self.play(Transform(ghost, ook), run_time=1.4)
         say("…carrier ON for a 1, OFF for a 0. The data now lives in a "
             "band around f_c — that's passband.")
-        self.wait(1.5)
+        self.wait(2)
         say("Every radio you own works this way — and different users ride "
             "different carriers, sharing the air without colliding.")
-        self.wait(1.5)
+        self.wait(2)
         self.play(FadeOut(stack), FadeOut(base), FadeOut(carrier),
                   FadeOut(ghost))
 
@@ -194,6 +195,7 @@ class InformationAndSignal(CyberScene):
 
         say("Four levels means two bits per step — same wave speed, "
             "double the data.")
+        self.wait(1)
         say("Modern Wi-Fi pushes this to 1024 levels: ten bits "
             "in a single symbol.")
         self.wait(0.5)
