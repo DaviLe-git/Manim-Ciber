@@ -22,6 +22,7 @@ class InformationAndSignal(CyberScene):
             new = Caption(text)
             self.play(FadeTransform(caption, new), run_time=0.7)
             caption = new
+            self.wait(2) # increase for more time to read
 
         # ---- Beat 1 · Information vs Signal ---------------------------
         card_info = InfoCard(
@@ -35,6 +36,7 @@ class InformationAndSignal(CyberScene):
             width=5.4)
         cards = VGroup(card_info, card_sig).arrange(RIGHT, buff=0.8)
         cards.next_to(header, DOWN, buff=0.6)
+        cards.move_to(RIGHT * 0.4) # moveed to right
         self.play(FadeIn(cards, lag_ratio=0.15))
         say("A message is information — abstract and perfect. "
             "To send it, it must become a signal: physics.")
@@ -66,9 +68,9 @@ class InformationAndSignal(CyberScene):
         lbl0 = SmallText("0 = -V", color=TEXT_SECONDARY)
         lbl0.next_to(scope, RIGHT, buff=0.3).set_y(cy - 0.8)
         self.play(FadeIn(lbl1), FadeIn(lbl0))
-        say("One voltage per bit: high means 1, low means 0. This is "
+        say("One voltage per bit: high=1, low=0. This is "
             "baseband — the signal sits at low frequency and goes "
-            "straight onto the wire.")
+            "straight onto the wire.") # its too long to fit on screen
         self.wait(0.5)
         self.play(FadeOut(scope), FadeOut(wave), FadeOut(row),
                   FadeOut(lbl1), FadeOut(lbl0))
@@ -86,6 +88,7 @@ class InformationAndSignal(CyberScene):
         self.play(Create(voice), run_time=1.5)
         say("Analog is continuous: any value, at every instant. Your voice "
             "on a phone line is a voltage wave shaped like this.")
+        self.wait(2)
 
         def square_partial(n, cycles=2.0):
             def fn(t):
@@ -108,14 +111,15 @@ class InformationAndSignal(CyberScene):
         badge = Badge("DIGITAL = ANALOG, SUMMED", kind="info").to_corner(UR, buff=0.7)
         self.play(FadeIn(badge, scale=0.8))
         say("Odd harmonics stack into a square. Digital signals are built "
-            "out of analog physics — the divide is thinner than it looks.")
+            "out of analog physics — the divide is thinner than it looks.") # too long
+        self.wait(1)
         self.play(FadeOut(scope), FadeOut(sine), FadeOut(badge))
 
         # ---- Beat 4 · Baseband vs passband ----------------------------
         say("Baseband is fine on a wire. But radio can't carry it — so the "
             "data has to ride a carrier.")
 
-        s1 = Scope(width=9.6, height=1.75, title="baseband — the bits")
+        s1 = Scope(width=9.6, height=1.75, title="baseband — the bits") # its overlaping the tittle
         s2 = Scope(width=9.6, height=1.75, title="carrier — pure sine at f_c")
         s3 = Scope(width=9.6, height=1.75, title="passband — data x carrier")
         stack = VGroup(s1, s2, s3).arrange(DOWN, buff=0.42)
@@ -148,8 +152,10 @@ class InformationAndSignal(CyberScene):
         self.play(Transform(ghost, ook), run_time=1.4)
         say("…carrier ON for a 1, OFF for a 0. The data now lives in a "
             "band around f_c — that's passband.")
+        self.wait(1.5)
         say("Every radio you own works this way — and different users ride "
             "different carriers, sharing the air without colliding.")
+        self.wait(1.5)
         self.play(FadeOut(stack), FadeOut(base), FadeOut(carrier),
                   FadeOut(ghost))
 
@@ -204,7 +210,4 @@ class InformationAndSignal(CyberScene):
         ).arrange(DOWN, buff=0.4)
         self.play(FadeOut(caption), FadeIn(final, shift=0.3 * UP))
 
-        teaser = Badge("NEXT — EAVESDROPPING", kind="danger")
-        teaser.next_to(final, DOWN, buff=0.6)
-        self.play(FadeIn(teaser, scale=0.8))
         self.wait(2)
