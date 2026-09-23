@@ -6,9 +6,13 @@ class TCPHandshakeV2(Scene):
     def construct(self):
         apply_theme(self)
         # Have to change to the new format title
-        title = Title("TCP Three-Way Handshake")
-        title.to_edge(UP)
-        self.play(Write(title))
+        header = SectionHeader(
+                "TCP Handshake:", kicker="Module 03 · Networking",
+            subtitle="Transmission Control Protocol - Handshake",
+        ).to_corner(UL, buff=0.7)
+        self.play(FadeIn(header, shift=0.3 * DOWN))
+
+       
         self.wait(0.5)
         
         # Have to change the client and server to LapTopIcon and ServerIcon 
