@@ -2,7 +2,7 @@
 
 A Python-based animation project for creating educational cybersecurity videos using [Manim Community](https://www.manim.community/).
 
-The goal is to develop a reusable visual language and component library for explaining cybersecurity concepts through clear, technical animations inspired by the educational approach of 3Blue1Brown.
+The goal is to develop a reusable visual language and component library for explaining cybersecurity concepts through clear, technical animations inspired by the educational approach of [3Blue1Brown](https://www.3blue1brown.com/).
 
 ## Project Goals
 
