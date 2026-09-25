@@ -146,6 +146,7 @@ Topics will include:
 ## Requirements
 
 * Python
+* pipx
 * Manim Community
 * FFmpeg
 * Git
@@ -155,7 +156,31 @@ Check the installed Manim version with:
 ```bash
 manim --version
 ```
-[Installing manim](https://docs.manim.community/en/stable/installation.html#local-installation)
+
+## Setup
+
+If you don't have manim installed you can follow the [official Installation guide](https://docs.manim.community/en/stable/installation.html#local-installation).
+
+Or you can follow these steps, to install and configure to run it easily:
+
+Install manim and put in your path:
+```bash
+pipx install manim
+pipx ensurepath
+# close and reopen your terminal
+```
+
+From the project root, make components/ importable by manim
+(installs this repo into manim's venv, in editable mode):
+```bash
+pipx inject manim --editable "$(pwd)"
+```
+
+Verify — this should render and open a test scene:
+```bash
+manim -pql scenes/test_default1.py TestIcons
+```
+
 ## License
 
 License information will be added as the project develops.
