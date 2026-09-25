@@ -155,7 +155,7 @@ Check the installed Manim version with:
 ```bash
 manim --version
 ```
-
+[Installing manim](https://docs.manim.community/en/stable/installation.html#local-installation)
 ## License
 
 License information will be added as the project develops.
