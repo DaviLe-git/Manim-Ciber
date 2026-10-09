@@ -5,20 +5,17 @@ from components.default import *
 class TCPHandshakeV2(Scene):
     def construct(self):
         apply_theme(self)
-        # Have to change to the new format title
         header = SectionHeader(
                 "TCP Handshake:", kicker="Module 03 · Networking",
             subtitle="Transmission Control Protocol - Handshake",
         ).to_corner(UL, buff=0.7)
         self.play(FadeIn(header, shift=0.3 * DOWN))
 
-       
         self.wait(0.5)
-        
-        # Have to change the client and server to LapTopIcon and ServerIcon 
+        self.play(FadeOut(header))
         # --- Client and Server nodes ---
-        client = LabeledBox("Client", box_size="small", text_size="medium")
-        server = LabeledBox("Server", box_size="small", text_size="medium")
+        client = device(LapTopIcon, "Client")
+        server = device(ServerIcon, "Server")
         client.to_edge(LEFT, buff=1.5).shift(UP * 1.5)
         server.to_edge(RIGHT, buff=1.5).shift(UP * 1.5)
         self.play(FadeIn(client), FadeIn(server))
@@ -51,7 +48,7 @@ class TCPHandshakeV2(Scene):
         end1 = np.array([server.get_center()[0], y1, 0])
 
         step1_label = SmallText("Step 1: Client initiates connection", color=TEXT_SECONDARY)
-        step1_label.next_to(title, DOWN, buff=0.3)
+        #step1_label.next_to(title, DOWN, buff=0.3)
         step1_note = annotation("SYN = 'synchronize' - a request to open a connection and agree on a starting sequence number")
         step1_note.next_to(step1_label, DOWN, buff=0.15)
 
